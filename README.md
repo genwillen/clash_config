@@ -4,5 +4,5 @@
 
 在远程配置中填写：
 ```
-https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/configs.ini
+https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/config.ini
 ```

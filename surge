@@ -1,0 +1,169 @@
+# 参考 https://github.com/scomper/Surge/blob/master/surge3.conf.ini
+# 参考 https://gist.github.com/Blankwonder/dca87b84b1052f4a6a277dce73e9c01a
+# 官方手册 - https://manual.nssurge.com/
+# 理解原理 - https://manual.nssurge.com/book/understanding-surge/cn/
+# 帮助中心 - https://nssurge.zendesk.com/
+# 技术社区 - https://community.nssurge.com
+# Surge 使用手册 - https://surge.mitsea.com/
+# 以"#" ";" 和 "//" 开头的行为注释行
+# 本配置主要参考https://github.com/BlueGrave 以及 https://divineengine.net/more/special/surge/ 特别感谢！
+# 本配置使用方法：在自动选择将“输入你的机场订阅链接”替换成你的机场提供的订阅网址即可。
+[General]
+loglevel = notify  # 日志等级，notify 表示通知级别，记录必要信息，适合日常使用。调试时可设置为 info 或 verbose。
+show-error-page-for-reject = true  # 当遇到 REJECT 策略（拒绝连接）时，显示错误页面，帮助识别被拦截的请求。
+
+
+allow-wifi-access = true  # 允许局域网内其他设备通过 Wi-Fi 访问 Surge 代理服务（HTTP/SOCKS5），方便手机或其他设备共享代理。
+http-listen = 0.0.0.0:6152  # HTTP 代理监听地址和端口，0.0.0.0 表示所有网络接口。
+socks5-listen = 0.0.0.0:6153  # SOCKS5 代理监听地址和端口。
+
+external-controller-access = william@127.0.0.1:6170  # 允许外部工具（如 Surge Dashboard、CLI）通过本机端口访问和管理 Surge，账号和端口可自定义。
+http-api = william@127.0.0.1:6171  
+http-api-tls = false  # 是否启用 HTTPS 来保护 API 通信，开启后需要安装并信任 CA 证书。
+http-api-web-dashboard = true  # 启用 Web Dashboard，通过浏览器访问 http://127.0.0.1:6171 进行管理。
+allow-hotspot-access = true  # 允许开启手机热点时，其他设备连接并使用 Surge 代理。
+
+test-timeout = 3  # 网络测试（如代理测速）的超时时间，单位秒。
+internet-test-url = http://www.baidu.com  # 用于检测网络连通性的 URL。
+proxy-test-url = http://connectivitycheck.gstatic.com/generate_204  # 用于代理节点检测的 URL。
+geoip-maxmind-url = https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country.mmdb  # GeoIP 数据库地址，用于地理位置判断。
+exclude-simple-hostnames = true  # 排除无域名后缀或简单主机名（如 localhost），避免错误代理。
+
+skip-proxy = 192.168.0.0/24, 10.0.0.0/8, 172.16.0.0/12, 127.0.0.1, localhost, *.local  # 局域网和本地地址不走代理，避免影响局域网设备通信。
+ipv6 = true  # 开启 IPv6 支持。
+ipv6-vif = auto  # IPv6 虚拟网卡自动启用。
+
+# Surge VIF 透明代理配置
+tun-included-routes = 0.0.0.0/0  # VIF 接管所有 IPv4 流量（全局代理）。
+tun-excluded-routes = 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12, 127.0.0.1/8, ::1/128, fe80::/10  # 排除局域网和本地环回地址，保证内网设备访问正常。
+include-all-networks = true  # 接管所有网络，包括 Wi-Fi、以太网等。
+include-local-networks = true  # 也接管局域网流量（如打印机、NAS），可按需关闭。
+hijack-dns = *:53  # 劫持所有标准 DNS 查询，防止设备绕过 Surge 直接访问 DNS，避免 DNS 污染和泄露。
+udp-priority = true  # 优化 UDP 处理，提升游戏、语音等应用体验。
+udp-policy-not-supported-behaviour = direct  # 当代理节点不支持 UDP，回退到直连。设置为 reject 会直接阻断 UDP 请求。
+
+# 对指定服务或域名返回真实 IP，避免使用 Fake IP，适合游戏和特定应用。
+always-real-ip = *.srv.nintendo.net, *.stun.playstation.net, xbox.*.microsoft.com, *.xboxlive.com, *.battlenet.com.cn, *.blzstatic.cn, *.battle.net, stun.ugreengroup.com, *.lan, *.ntp.org.cn, *.music.163.com  
+
+###### Surge DNS 配置 ######
+read-etc-hosts = true  # 读取系统 /etc/hosts 文件中的本地 DNS 映射，增强本地解析。
+use-local-host-item-for-proxy = true  # 当代理请求对应本地映射 IP 时，强制使用映射的 IP，避免代理使用域名直接解析。
+dns-server = 119.29.29.29, 223.5.5.5  # 传统 DNS 服务器地址，作为回退或兼容使用。
+encrypted-dns-server = https://doh.pub/dns-query, https://dns.alidns.com/dns-query  # 加密 DNS (DoH) 服务器地址，推荐使用，提高 DNS 隐私和安全。
+encrypted-dns-follow-outbound-mode = false  # 加密 DNS 是否通过代理发出，false 表示 DNS 请求直连。
+encrypted-dns-skip-cert-verification = false  # 是否跳过加密 DNS 的证书校验，false 保证安全。
+
+[Proxy Group]
+
+# 手动选择代理节点的策略组，支持订阅远程策略路径
+🌐 Node Selection = select, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac
+
+# 自动测速策略组，依据 URL 测试自动选择最快节点，更新间隔 1 小时
+♻️ Auto = url-test, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac, update-interval = 86400, url = http://www.gstatic.com/generate_204, interval=300, tolerance=50
+
+# 区域分组策略，将订阅节点按区域分类，方便分流
+🇭🇰HongKong = url-test, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac, update-interval = 86400, policy-regex-filter = (🇭🇰)|(港)|(Hong)|(HK)
+🇹🇼Taiwan = url-test, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac, update-interval = 86400, policy-regex-filter = (🇼🇸)|(台)|(Tai)|(TW)
+🇯🇵Japan = url-test, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac, update-interval = 86400, policy-regex-filter = (🇯🇵)|(日)|(Japan)|(JP)
+🇺🇸America = url-test, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac, update-interval = 86400, policy-regex-filter = (🇺🇸)|(美)|(States)|(US)
+🇬🇧England = url-test, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac, update-interval = 86400, policy-regex-filter = (🇬🇧)|(英)|(Kingdom)|(UK)
+🇸🇬 Singapore = url-test, policy-path = https://sub.store/download/%E7%BA%A2%E6%9D%8F%E4%BA%91?target=SurgeMac, update-interval = 86400, policy-regex-filter = (🇸🇬)|(新)|(Singapore)|(SG)
+
+# 流媒体相关策略组
+📹 YouTube = select, ♻️ Auto, 🌐 Node Selection, 🇭🇰HongKong, 🇹🇼Taiwan, 🇯🇵Japan, 🇬🇧England, 🇸🇬 Singapore
+🎬 BiliBili = select, 🇭🇰HongKong, 🌐 Node Selection, 🇹🇼Taiwan, 🇯🇵Japan, 🇺🇸America, 🇸🇬 Singapore
+# 服务专用策略组
+Ⓜ️Google = select, 🇺🇸America, 🌐 Node Selection
+🍎 Apple = select, 🇺🇸America, 🌐 Node Selection, 🇭🇰HongKong, DIRECT
+🛜 OpenAI = select, 🇯🇵Japan, 🌐 Node Selection, 🇭🇰HongKong, 🇹🇼Taiwan, 🇸🇬 Singapore
+💬 Facebook = select, 🇺🇸America, 🌐 Node Selection, 🇭🇰HongKong, 🇹🇼Taiwan
+🎮 Steam = select, 🇭🇰HongKong,  🌐 Node Selection, 🇹🇼Taiwan, 🇯🇵Japan, 🇺🇸America, 🇸🇬 Singapore, DIRECT
+🔍 Microsoft = select, ⚖️ Load Balance, 🇭🇰HongKong
+
+⚖️ Load Balance = load-balance, policy-path = https://sub.store/download/红某云?target=SurgeMac, url = http://www.gstatic.com/generate_204, interval = 300, tolerance = 100
+# 基础策略组，定义全局连接和广告屏蔽
+🛑 Ad blocking = select, REJECT
+
+[Rule]
+
+# 自定义规则 - 可按需启用或新增拦截刷剧类网站
+# DOMAIN-SUFFIX, iqiyi.com, REJECT
+
+# 区域规则示例，匹配多域名分配到美国节点
+OR, ((DOMAIN-SUFFIX, bing.com), (DOMAIN-SUFFIX, meta.ai), (DOMAIN-SUFFIX, instagram.com), (DOMAIN-SUFFIX, claude.ai), (DOMAIN-SUFFIX, anthropic.com), (DOMAIN-SUFFIX, vfsglobal.com), (DOMAIN-SUFFIX, .ca), (DOMAIN-SUFFIX, docker.com)), 🇺🇸America
+OR, ((DOMAIN-KEYWORD, google), (DOMAIN-SUFFIX, copilot.microsoft.com)), 🇺🇸America
+OR, ((DOMAIN-SUFFIX, itoolab.com), (DOMAIN-SUFFIX, itoolab.net), (DOMAIN-SUFFIX, ip-api.com)), 🇺🇸America
+OR, ((DOMAIN-SUFFIX, jetbrains.com), (DOMAIN-SUFFIX, ugreengroup.com), (DOMAIN-SUFFIX, msftconnecttest.com), (DOMAIN-SUFFIX, appstorrent.ru), (DOMAIN-SUFFIX, zerotier.com), (DOMAIN-SUFFIX, imgse.com)), DIRECT
+
+# 规则集引用，保证常用规则自动更新及分流准确
+
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list, 🛑 Ad blocking, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list, 🛑 Ad blocking, update-interval = 86400
+
+# google
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/GoogleVoice/GoogleVoice.list, Ⓜ️Google, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/GoogleFCM/GoogleFCM.list, Ⓜ️Google, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Google/Google.list, Ⓜ️Google, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/GoogleCN.list, Ⓜ️Google, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/GoogleSearch/GoogleSearch.list, Ⓜ️Google, update-interval = 86400
+
+# Steam
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/SteamCN/SteamCN.list, DIRECT, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Steam/Steam.list, 🎮 Steam, update-interval = 86400
+
+# microsoft
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/OneDrive.list, 🔍 Microsoft, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Microsoft/Microsoft.list, 🔍 Microsoft, update-interval = 86400
+
+# Apple
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Apple/Apple.list, 🍎 Apple, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/AppleProxy/AppleProxy.list, 🍎 Apple, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/AppleMusic/AppleMusic.list, 🍎 Apple, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/AppleTV/AppleTV.list, 🍎 Apple, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/AppleID/AppleID.list, 🍎 Apple, update-interval = 86400
+
+# 社交媒体相关规则集
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Spotify/Spotify.list, 🇺🇸America, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Telegram/Telegram.list, ⚖️ Load Balance, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/OpenAI/OpenAI.list, 🛜 OpenAI, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Facebook/Facebook.list, 💬 Facebook, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Instagram/Instagram.list, 💬 Facebook, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Whatsapp/Whatsapp.list, 💬 Facebook, update-interval = 86400
+
+# 流媒体相关规则集
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/YouTube/YouTube.list, 📹 YouTube, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Netflix/Netflix.list, 🇭🇰HongKong, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/BiliBiliIntl/BiliBiliIntl.list, 🎬 BiliBili, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/BiliBili/BiliBili.list, 🎬 BiliBili, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Jetbrains/Jetbrains.list, ⚖️ Load Balance, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/GitHub/GitHub.list, ⚖️ Load Balance, update-interval = 86400
+
+# Other
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list, 🇺🇸America, update-interval = 86400
+
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Epic/Epic.list, 🎮 Steam, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Steam/Steam.list, 🎮 Steam, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/SteamCN/SteamCN.list, DIRECT, update-interval = 86400
+
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyGFWlist.list, 🇺🇸America, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Proxy/Proxy.list, 🇺🇸America, update-interval = 86400
+
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaDomain.list, DIRECT, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list, DIRECT, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/ChinaIPs/ChinaIPs.list, DIRECT, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Direct/Direct.list, DIRECT, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list, DIRECT, update-interval = 86400
+RULE-SET, https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/UnBan.list, DIRECT, update-interval = 86400
+
+# GeoIP 中国地址直连
+GEOIP, CN, DIRECT
+
+# 兜底规则，所有未匹配走美国节点
+FINAL, 🇺🇸America
+
+
+[MITM]
+
+
+[Script]
+iQIYI.js = script-path=https://raw.githubusercontent.com/NobyDa/Script/master/iQIYI-DailyBonus/iQIYI.js,type=http-request,pattern=https?:\/\/.*\.iqiyi\.com\/.*authcookie=

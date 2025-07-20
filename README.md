@@ -6,3 +6,9 @@
 ```
 https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/config.ini
 ```
+或者：
+
+```
+https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/Surge.ini
+```
+

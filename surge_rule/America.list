@@ -1,0 +1,6 @@
+
+PROCESS-NAME,"/Applications/Google Chrome.app/"
+PROCESS-NAME,/System/Library/PrivateFrameworks/CloudKitDaemon.framework/Support/cloudd
+PROCESS-NAME,/System/Library/PrivateFrameworks/CloudServices.framework/Helpers/com.apple.sbd
+PROCESS-NAME,/usr/libexec/nsurlsessiond
+PROCESS-NAME,/usr/libexec/rtcreportingd

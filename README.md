@@ -12,3 +12,19 @@ https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/config.
 https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/Surge.ini
 ```
 
+# clash_config
+
+Hosted Configuration
+
+In the remote configuration (Clash or other compatible clients), enter:
+
+```
+https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/config.ini
+```
+
+Or (for Surge):
+
+```
+https://raw.githubusercontent.com/genwillen/clash_config/refs/heads/main/Surge.ini
+```
+
